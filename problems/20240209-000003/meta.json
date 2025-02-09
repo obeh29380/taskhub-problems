@@ -1,0 +1,9 @@
+{
+    "name": "20240209-000002",
+    "title": "sample-rust",
+    "description": "Rust sandbox",
+    "image": "rust:latest",
+    "exec_command": ["sh", "-c", "echo '{code}' > /tmp/main.rs && rustc -o /tmp/main /tmp/main.rs && /tmp/main"],
+    "tests": [],
+    "author": "sample"
+}

@@ -1,8 +1,9 @@
 {
-    "name": "20240209-000001",
+    "name": "20240209-000002",
     "title": "python-lesson-1",
-    "description": "Python Lesson 1",
+    "description": "Python sandbox",
     "image": "python:3.11",
     "exec_command": ["python3", "-c", "{code}"],
-    "tests": ["test_sample_1.py", "test_sample_2"]
+    "tests": [],
+    "author": "sample"
 }
