@@ -1,1 +1,8 @@
 指定した数の二乗を計算するプログラム`squared(n)`を作成してください。
+
+ちなみに正解は以下の通り。
+
+```
+def squared(n):
+  return 1 if n == 0 else n*n
+```
