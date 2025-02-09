@@ -1,0 +1,7 @@
+{
+    "name": "20240209-000001",
+    "title": "python-lesson-1",
+    "description": "Python Lesson 1",
+    "image": "python:3.11",
+    "exec_command": ["python3", "-c", "{code}"]
+}
