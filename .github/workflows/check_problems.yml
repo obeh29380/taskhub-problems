@@ -11,11 +11,77 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          path: 'taskhub-problems'
 
-      - name: run changed problems
+      - name: clone other repository
+        uses: actions/checkout@v4
+        with:
+          repository: 'obeh29380/taskhub'
+          token: ${{ secrets.TASKHUB_TOKEN }}
+          path: 'taskhub'
+          show-progress: 'true'
+      - name: Setup problems directory
         run: |
-          bash tests/run.sh
+          cp -r taskhub-problems taskhub/
+      - name: run server
+        run: |
+          cd taskhub && bash run.sh
+      - name: list containers
+        run: |
+          docker ps
+      - name: 何故かマウントしたproblemsディレクトリが空になるのでコピーで入れる
+        run: |
+          docker cp taskhub/taskhub-problems/problems ccpp:/app/taskhub-problems/
+      - name: Wait for server to be ready
+        run: |
+          # サーバが起動するまでリトライ
+          for i in {1..30}; do
+            if curl -s http://localhost:8000/assignment; then
+              echo "Server is up and running!"
+              break
+            else
+              echo "Waiting for server to start..."
+              sleep 1
+            fi
+          done
+      - name: check container logs
+        run: |
+          docker logs ccpp
+      - name: get changed problems
+        run: |
+          changed_problems=$(cd taskhub-problems && git diff HEAD^ --name-only | grep '^problems/' | cut -d'/' -f2 | sort -u)
+          echo "changed_problems="$changed_problems"" >> $GITHUB_ENV
+          echo Updated or created problems: $changed_problems
+      - name: check answer txt exists
+        run: |
+          echo "answer="$(cat taskhub/taskhub-problems/problems/20240209-000002/answer)"" >> $GITHUB_ENV
+      - name: run tests
+        run: |
+          for problem_id in ${{ env.changed_problems }}; do
+            echo "Checking $problem_id"
+
+            answer=$(cat taskhub/taskhub-problems/problems/$problem_id/answer)
+            escaped_answer=$(echo "$answer" | jq -Rs .)
+            response=$(curl -f -X POST "http://localhost:8000/run" \
+              -H "Content-Type: application/json" \
+              -d "{\"code\":$escaped_answer, \"assignment_id\":\"$problem_id\"}" \
+              -s)
+            returncodes=$(echo "$response" | jq -cr '[.[].returncode]')
+            stderrs=$(echo "$response" | jq -cr '[.[].stderr]')
+            stdouts=$(echo "$response" | jq -cr '[.[].stdout]')
+            len=$(echo $response | jq length)
+            for i in $( seq 0 $(($len - 1)) ); do
+              row=$(echo "$returncodes" | jq .[$i])
+              if [ 0 -ne $row ] ; then
+                echo "Test $i failed. Returncode: $row stderr: $(echo "$stderrs" | jq .[$i])"
+                exit 1
+              else
+                echo "Test $i passed. Returncode: $row strout: $(echo "$stdouts" | jq .[$i])"
+              fi
+            done
+          done
