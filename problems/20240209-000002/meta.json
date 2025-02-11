@@ -3,6 +3,6 @@
     "title": "python-lesson-2",
     "description": "Python Lesson 2",
     "image": "python:3.11",
-    "exec_command": ["echo '{code}' > /tmp/script && python3 /tmp/script"],
+    "exec_command": ["bash", "-c", "echo '{code}' > /tmp/script && python3 /tmp/script"],
     "tests": ["test_sample_1.py", "test_sample_2"]
 }
