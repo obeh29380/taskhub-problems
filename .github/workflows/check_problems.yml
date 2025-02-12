@@ -30,7 +30,7 @@ jobs:
           cp -r taskhub-problems taskhub/
       - name: Setup swarm manager
         run: |
-          docker swarm init
+          docker swarm init || true
       - name: run server
         run: |
           cd taskhub && bash run.sh

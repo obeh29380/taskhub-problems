@@ -1,0 +1,6 @@
+.netを自由に実行してください。
+
+sample
+```
+Console.WriteLine("Hello, sampleWorld!");
+```
