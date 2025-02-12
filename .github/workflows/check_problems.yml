@@ -68,10 +68,12 @@ jobs:
 
             answer="$(cat taskhub/taskhub-problems/problems/$problem_id/answer)"
             escaped_answer=$(echo "$answer" | jq -Rs .)
+            echo "Answer: $escaped_answer"
             response=$(curl -f -X POST "http://localhost:8000/run" \
               -H "Content-Type: application/json" \
               -d "{\"code\":$escaped_answer, \"assignment_id\":\"$problem_id\"}" \
               -s)
+            echo "Response: $response"
             returncodes=$(echo "$response" | jq -cr '[.[].returncode]')
             stderrs=$(echo "$response" | jq -cr '[.[].stderr]')
             stdouts=$(echo "$response" | jq -cr '[.[].stdout]')
