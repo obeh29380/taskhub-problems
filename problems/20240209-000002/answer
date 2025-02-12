@@ -1,2 +1,2 @@
-def squared(n):
-  return 1 if n == 0 else n*n
+def multiple(a, n):
+  return a ** n

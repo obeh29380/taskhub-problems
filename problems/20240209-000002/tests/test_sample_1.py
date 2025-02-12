@@ -1,4 +1,2 @@
-assert squared(1) == 1
-assert squared(2) == 4
-assert squared(3) == 9
-assert squared(4) == 16
+assert multiple(1, 10) == 1
+assert multiple(2, 4) == 16

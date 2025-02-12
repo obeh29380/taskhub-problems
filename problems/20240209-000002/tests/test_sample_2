@@ -1,1 +1,1 @@
-assert squared(0) == 1
+assert multiple(2, 0) == 1
