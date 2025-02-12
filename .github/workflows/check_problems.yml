@@ -28,6 +28,9 @@ jobs:
       - name: Setup problems directory
         run: |
           cp -r taskhub-problems taskhub/
+      - name: Setup swarm manager
+        run: |
+          docker swarm init
       - name: run server
         run: |
           cd taskhub && bash run.sh
@@ -69,15 +72,22 @@ jobs:
             answer="$(cat taskhub/taskhub-problems/problems/$problem_id/answer)"
             escaped_answer=$(echo "$answer" | jq -Rs .)
             echo "Answer: $escaped_answer"
-            response=$(curl -f -X POST "http://localhost:8000/run" \
+            response=$(curl -X POST "http://localhost:8000/run" \
               -H "Content-Type: application/json" \
               -d "{\"code\":$escaped_answer, \"assignment_id\":\"$problem_id\"}" \
-              -s)
+              -s -w "\n%{http_code}")
             echo "Response: $response"
-            returncodes=$(echo "$response" | jq -cr '[.[].returncode]')
-            stderrs=$(echo "$response" | jq -cr '[.[].stderr]')
-            stdouts=$(echo "$response" | jq -cr '[.[].stdout]')
-            len=$(echo $response | jq length)
+            http_code=$(echo "$response" | tail -n1)
+            body=$(echo "$response" | sed '$d')
+            if [[ "$http_code" -ne 200 ]]; then
+              echo "Request failed with status $http_code"
+              echo $(docker logs ccpp)
+              exit 1
+            fi
+            returncodes=$(echo "$body" | jq -cr '[.[].returncode]')
+            stderrs=$(echo "$body" | jq -cr '[.[].stderr]')
+            stdouts=$(echo "$body" | jq -cr '[.[].stdout]')
+            len=$(echo $body | jq length)
             for i in $( seq 0 $(($len - 1)) ); do
               row=$(echo "$returncodes" | jq .[$i])
               if [ 0 -ne $row ] ; then
