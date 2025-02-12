@@ -62,10 +62,11 @@ jobs:
           echo "answer="$(cat taskhub/taskhub-problems/problems/20240209-000002/answer)"" >> $GITHUB_ENV
       - name: run tests
         run: |
+          set -f
           for problem_id in ${{ env.changed_problems }}; do
             echo "Checking $problem_id"
 
-            answer=$(cat taskhub/taskhub-problems/problems/$problem_id/answer)
+            answer="$(cat taskhub/taskhub-problems/problems/$problem_id/answer)"
             escaped_answer=$(echo "$answer" | jq -Rs .)
             response=$(curl -f -X POST "http://localhost:8000/run" \
               -H "Content-Type: application/json" \
@@ -81,7 +82,7 @@ jobs:
                 echo "Test $i failed. Returncode: $row stderr: $(echo "$stderrs" | jq .[$i])"
                 exit 1
               else
-                echo "Test $i passed. Returncode: $row strout: $(echo "$stdouts" | jq .[$i])"
+                echo "Test $i passed. Returncode: $row stdout: $(echo "$stdouts" | jq .[$i])"
               fi
             done
           done

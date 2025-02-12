@@ -1,2 +1,4 @@
 def multiple(a, n):
-  return a ** n
+  res = a ** n
+  print(res)
+  return res
