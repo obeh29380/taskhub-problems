@@ -1,0 +1,13 @@
+.netを自由に実行してください。  
+なお、VBです。
+
+sample
+```
+Imports System
+
+Module Program
+    Sub Main(args As String())
+        Console.WriteLine("Hello VBWorld!")
+    End Sub
+End Module
+```

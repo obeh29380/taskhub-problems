@@ -3,5 +3,5 @@
 
 sample
 ```
-Console.WriteLine("Hello, sampleWorld!");
+Console.WriteLine("Hello, C#World!");
 ```

@@ -1,0 +1,9 @@
+{
+    "name": "20240212-000001",
+    "title": "sample-.net",
+    "description": ".net sandbox",
+    "image": "mcr.microsoft.com/dotnet/sdk:6.0",
+    "exec_command": ["bash", "-c", "mkdir -p /tmp/dotnet && cd /tmp/dotnet && dotnet new console --framework net6.0 --language VB && echo '{code}' > /tmp/dotnet/Program.vb && dotnet run --language 'VB'"],
+    "tests": [],
+    "author": "sample"
+}
